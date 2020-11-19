@@ -263,23 +263,23 @@ public class XpnSearch {
 			String[] segments = e.text().split(" - ");
 			String song = segments[1];
 			SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy HH:mm a");
-			Date date = formatter.parse(segments[0].substring(0, 19));
+			Date spinDate = formatter.parse(segments[0].substring(0, 19));
 			
-			if ((date.after(firstDayOfWeek) || date.equals(firstDayOfWeek)) && (date.before(lastDayOfWeek) || date.equals(lastDayOfWeek))){
-				System.out.println("song is " + song + " date is " + date);
+			if (isDateInRange(firstDayOfWeek, lastDayOfWeek, spinDate)){
+				System.out.println("song is " + song + " date is " + spinDate);
 				String key = artistInfo.getArtistName() + artistInfo.getAlbum() + song;
 				Spin spin = allSpins.get(key);
 				
 				if (spin == null) {
-					spin = new Spin(artistInfo.getArtistName(), song, artistInfo.getAlbum(), date, date);
+					spin = new Spin(artistInfo.getArtistName(), song, artistInfo.getAlbum(), spinDate, spinDate);
 					spin.setDj("Kristen Kurtis");
 				} 
 				else {
-					if (date.before(spin.getFirstPlayDate())) {
-						spin.setFirstPlayDate(date);
+					if (spinDate.before(spin.getFirstPlayDate())) {
+						spin.setFirstPlayDate(spinDate);
 					}
-					if (date.after(spin.getLastPlayDate())) {
-						spin.setLastPlayDate(date);
+					if (spinDate.after(spin.getLastPlayDate())) {
+						spin.setLastPlayDate(spinDate);
 					}
 				}
 				
@@ -291,8 +291,17 @@ public class XpnSearch {
 
 		}
 	}
+	
+	private static boolean isDateInRange(Date firstDayOfWeek, Date lastDayOfWeek, Date spinDate) {
+		if ((spinDate.after(firstDayOfWeek) || spinDate.equals(firstDayOfWeek)) && (spinDate.before(lastDayOfWeek) || spinDate.equals(lastDayOfWeek))){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 	//create a map of spin lists organized by artist names
-	private Map<String, List<Spin>> getSpinsByArtist(Collection<Spin> values) {
+	private static Map<String, List<Spin>> getSpinsByArtist(Collection<Spin> values) {
 		
 		Map<String, List<Spin>> spins = new HashMap<>();
 		
