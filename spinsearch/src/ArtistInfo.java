@@ -6,7 +6,6 @@ public class ArtistInfo {
 	private String[] songs;
 	private String label;
 	public String getAlbum() { 
-		//hi
 		return album;
 	}
 	public void setAlbum(String album) {
