@@ -9,6 +9,13 @@ public class Spin {
 	private int count;
 	private String dj;
 	
+	public Spin(String artist, String song, String album, Date firstPlayDate, Date lastPlayDate) {
+		this.artist = artist;
+		this.song = song;
+		this.album = album;
+		this.firstPlayDate = firstPlayDate;
+		this.lastPlayDate = lastPlayDate;
+	}
 	
 	public String getArtist() {
 		return artist;

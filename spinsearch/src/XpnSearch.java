@@ -271,12 +271,7 @@ public class XpnSearch {
 				Spin spin = allSpins.get(key);
 				
 				if (spin == null) {
-					spin = new Spin();
-					spin.setFirstPlayDate(date);
-					spin.setLastPlayDate(date);
-					spin.setAlbum(artistInfo.getAlbum());
-					spin.setSong(song);
-					spin.setArtist(artistInfo.getArtistName());
+					spin = new Spin(artistInfo.getArtistName(), song, artistInfo.getAlbum(), date, date);
 					spin.setDj("Kristen Kurtis");
 				} 
 				else {
