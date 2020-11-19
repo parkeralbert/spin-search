@@ -105,15 +105,13 @@ public class XpnSearch {
 		return lastDayOfWeek;
 	}
 
-
+	private void spinSearch(String url, ArrayList <ArtistInfo> artistInfos, Date firstDayOfWeek, Date lastDayOfWeek, String filePath) throws Exception {
+		Map<String, List<Spin>> spinsByArtist = getSpins(url, artistInfos, firstDayOfWeek, lastDayOfWeek, filePath);
+		outputSpinsByArtist(filePath, spinsByArtist);
+	}
 	
 	//scrape the webpage for spins, organize them, write them to file
-	public void getSpins(String url, ArrayList <ArtistInfo> artistInfos, Date firstDayOfWeek, Date lastDayOfWeek, String filePath) throws Exception {
-		BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
-		writer.write("WXPN");
-		writer.newLine();
-		writer.close();
-		//String dj = "Kristen Kurtis";
+	public Map<String, List<Spin>> getSpins(String url, ArrayList <ArtistInfo> artistInfos, Date firstDayOfWeek, Date lastDayOfWeek, String filePath) throws Exception {
 		ArrayList<ArtistInfo> artistsToSearch = artistInfos;
 		Map<String, Spin> allSpins = new HashMap<>();
 
@@ -132,11 +130,17 @@ public class XpnSearch {
 		}
 		
 		Map<String, List<Spin>> spinsByArtist = getSpinsByArtist(allSpins.values());
+		
+		return spinsByArtist;
 
-		outputSpinsByArtist(filePath, spinsByArtist);
 	}
 
 	private void outputSpinsByArtist(String filePath, Map<String, List<Spin>> spinsByArtist) throws Exception {
+		BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+		writer.write("WXPN");
+		writer.newLine();
+		writer.close();
+		
 		for (List<Spin> spinsToPrint : spinsByArtist.values()) {
 			writeSpinsToFile(spinsToPrint, filePath);
 		}
