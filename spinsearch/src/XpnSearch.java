@@ -105,13 +105,13 @@ public class XpnSearch {
 		return lastDayOfWeek;
 	}
 
-	private void spinSearch(String url, ArrayList <ArtistInfo> artistInfos, Date firstDayOfWeek, Date lastDayOfWeek, String filePath) throws Exception {
+	public void spinSearch(String url, ArrayList <ArtistInfo> artistInfos, Date firstDayOfWeek, Date lastDayOfWeek, String filePath) throws Exception {
 		Map<String, List<Spin>> spinsByArtist = getSpins(url, artistInfos, firstDayOfWeek, lastDayOfWeek, filePath);
 		outputSpinsByArtist(filePath, spinsByArtist);
 	}
 	
 	//scrape the webpage for spins, organize them, write them to file
-	public Map<String, List<Spin>> getSpins(String url, ArrayList <ArtistInfo> artistInfos, Date firstDayOfWeek, Date lastDayOfWeek, String filePath) throws Exception {
+	private Map<String, List<Spin>> getSpins(String url, ArrayList <ArtistInfo> artistInfos, Date firstDayOfWeek, Date lastDayOfWeek, String filePath) throws Exception {
 		ArrayList<ArtistInfo> artistsToSearch = artistInfos;
 		Map<String, Spin> allSpins = new HashMap<>();
 
@@ -197,11 +197,10 @@ public class XpnSearch {
 		String[] fullAlbum = {};
 		
 		if (line.indexOf(delim) != -1) {
+			ArtistInfo artistInfo = new ArtistInfo();
 			
 			if (!singleOnly) {
-			ArtistInfo artistInfo = new ArtistInfo();
-			String[] segments = line.split(" " + delim + " ");
-			artistInfo.setArtistName(segments[0]); 
+			String[] segments = splitArtistsAndPromotedProjects(line, delim, artistInfo); 
 			artistInfo.setAlbum(segments[1]);
 			
 			artistInfo.setSongs(fullAlbum);
@@ -213,8 +212,7 @@ public class XpnSearch {
 		}
 			
 		else {
-			
-			ArtistInfo artistInfo = new ArtistInfo();
+
 			String[] segments = line.split(" " + delim + " ");
 			artistInfo.setArtistName(segments[0]); 
 			artistInfo.setAlbum("Singles");
@@ -246,6 +244,13 @@ public class XpnSearch {
 		}
 	}
 	}
+
+	private static String[] splitArtistsAndPromotedProjects(String line, String delim, ArtistInfo artistInfo) {
+		String[] segments = line.split(" " + delim + " ");
+		artistInfo.setArtistName(segments[0]);
+		return segments;
+	}
+	
 	
 
 	//uses data from webpage to create a spin for each promoted song within date range and returns all spins

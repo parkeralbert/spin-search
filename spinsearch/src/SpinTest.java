@@ -27,6 +27,6 @@ public class SpinTest {
         }
 		System.out.println("This week is " + firstDayOfWeek + " - " + lastDayOfWeek);
         ArrayList <ArtistInfo> searchList =  xpn.getArtistList(readPath, delim);
-        xpn.getSpins("https://xpn.org/playlists/playlist-search", searchList, firstDayOfWeek, lastDayOfWeek, writePath);
+        xpn.spinSearch("https://xpn.org/playlists/playlist-search", searchList, firstDayOfWeek, lastDayOfWeek, writePath);
     }
 }
