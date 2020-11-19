@@ -198,11 +198,15 @@ public class XpnSearch {
 		
 		if (line.indexOf(delim) != -1) {
 			ArtistInfo artistInfo = new ArtistInfo();
+			String[] segments = splitArtistNameAndProjectName(line, delim, artistInfo); 
+			
+			if(segments.length >= 3) {
+				artistInfo.setLabel(segments[2]);
+			}
 			
 			if (!singleOnly) {
-			String[] segments = splitArtistsAndPromotedProjects(line, delim, artistInfo); 
-			artistInfo.setAlbum(segments[1]);
 			
+			artistInfo.setAlbum(segments[1]);
 			artistInfo.setSongs(fullAlbum);
 			artistInfos.add(artistInfo);
 			
@@ -212,40 +216,40 @@ public class XpnSearch {
 		}
 			
 		else {
-
-			String[] segments = line.split(" " + delim + " ");
-			artistInfo.setArtistName(segments[0]); 
+			
 			artistInfo.setAlbum("Singles");
 			
-			if(segments[1].indexOf(" + ") != -1) {
-				artistInfo.setSongs(segments[1].split("\s\\+\s"));
-			}
-			
-			else {
-				artistInfo.setSongs(new String[] {segments[1]});
-			}
+			setSongs(segments[1], artistInfo);
 			
 			String[] songs = artistInfo.getSongs();
 			
-			//removing quotes from each stored song name
-			for (int i = 0; i < artistInfo.getSongs().length; i++) {
-				System.out.println("Parsing song: " + songs[i]);
-				songs[i] = songs[i].substring(1, songs[i].length()-1);
-			}
+			removeQuotes(artistInfo, songs);
 			
 			artistInfo.setSongs(songs);
-			artistInfo.setSingleOnly(true);
-			
-			if(segments.length >= 3) {
-				artistInfo.setLabel(segments[2]);
-			}
-			
+			artistInfo.setSingleOnly(true);		
 			artistInfos.add(artistInfo);
 		}
 	}
 	}
 
-	private static String[] splitArtistsAndPromotedProjects(String line, String delim, ArtistInfo artistInfo) {
+	private static void removeQuotes(ArtistInfo artistInfo, String[] songs) {
+		for (int i = 0; i < artistInfo.getSongs().length; i++) {
+			System.out.println("Parsing song: " + songs[i]);
+			songs[i] = songs[i].substring(1, songs[i].length()-1);
+		}
+	}
+
+	private static void setSongs(String songs, ArtistInfo artistInfo) {
+		if(songs.indexOf(" + ") != -1) {
+			artistInfo.setSongs(songs.split("\s\\+\s"));
+		}
+		
+		else {
+			artistInfo.setSongs(new String[] {songs});
+		}
+	}
+	
+	private static String[] splitArtistNameAndProjectName(String line, String delim, ArtistInfo artistInfo) {
 		String[] segments = line.split(" " + delim + " ");
 		artistInfo.setArtistName(segments[0]);
 		return segments;
