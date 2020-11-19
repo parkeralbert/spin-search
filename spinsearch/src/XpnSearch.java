@@ -133,6 +133,10 @@ public class XpnSearch {
 		
 		Map<String, List<Spin>> spinsByArtist = getSpinsByArtist(allSpins.values());
 
+		outputSpinsByArtist(filePath, spinsByArtist);
+	}
+
+	private void outputSpinsByArtist(String filePath, Map<String, List<Spin>> spinsByArtist) throws Exception {
 		for (List<Spin> spinsToPrint : spinsByArtist.values()) {
 			writeSpinsToFile(spinsToPrint, filePath);
 		}
