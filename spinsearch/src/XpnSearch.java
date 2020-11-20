@@ -40,7 +40,7 @@ public class XpnSearch {
 	public Date getFirstDayOfWeek(String filePath) {
 		Date firstDayOfWeek = null;
 		String line = null;
-		try
+		try 
 		{
 			BufferedReader reader = new BufferedReader(new FileReader(filePath));
 			while ((line = reader.readLine()) != null && firstDayOfWeek == null)
