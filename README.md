@@ -3,9 +3,9 @@ Script that searches and stores promoted artists spins from radio playlists
 
 STEPS TO RUN LOCALLY:
 1. Pull entire project from github
-2. Download attached .txt file titled "spin_inputs"
+2. Download attached .txt file titled "new_spin_inputs"
 3. Within the project, navigate to the SpinTest class
-4. Give "readpath" string the file path of the downloaded spin_inputs
+4. Give "readpath" string the file path of the downloaded new_spin_inputs
 5. Give "writepath" a file path in which you would like the output file to be stored - it does not have to be created yet 
   (the text in output file will be erased and written over each time the code runs)
 6. You can change the artist, project, and label names of the "readpath" file, as well as the dates, but make sure the EXACT same format
