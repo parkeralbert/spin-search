@@ -14,4 +14,6 @@ STEPS TO RUN LOCALLY:
 7. Run the code from the SpinTest class and voila! You should have a list of all of the promoted artists' spins from WXPN within the specified 
    date range, organized by artist
 
+NOTE: This is a work in progress, unit tests are still being created to fine tune the project, and extra functionalities are likely to be pushed down the line.
+
 You can email me at parkeralbert1@gmail.com if you have any questions or concerns!
