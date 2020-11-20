@@ -17,19 +17,10 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class XpnSearch {
-	// We'll use a fake USER_AGENT so the web server thinks the robot is a normal
-	// web browser.
+
 	private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.112 Safari/535.1";
 
 	
-	/**
-	 * This performs all the work. It makes an HTTP request, checks the response,
-	 * and then gathers up all the links on the page. Perform a searchForWord after
-	 * the successful crawl
-	 * 
-	 * @param url - The URL to visit
-	 * @return whether or not the crawl was successful
-	 */
 	public static Date parseDate(String date) {
 	     try {
 	         return new SimpleDateFormat("MM/dd/yy").parse(date);
@@ -46,7 +37,6 @@ public class XpnSearch {
 	     }
 	}
 
-	//reads first date on input file and stores it
 	public Date getFirstDayOfWeek(String filePath) {
 		Date firstDayOfWeek = null;
 		String line = null;
@@ -87,7 +77,41 @@ public class XpnSearch {
 		return lastDayOfWeek;
 	}
 
-	static Date parseFirstDayOfWeek(String line) {
+	//reads and stores albums and singles to search
+	public ArrayList <ArtistInfo> getArtistList(String filePath, String delim){
+		
+		String line = null;
+		ArrayList<ArtistInfo> artistInfos = new ArrayList<ArtistInfo>(); 
+		boolean singleOnly = false;
+		try
+		{
+			BufferedReader reader = new BufferedReader(new FileReader(filePath));
+			while ((line = reader.readLine()) != null)
+			{
+				
+				if (line.equalsIgnoreCase("singles:")) {
+					singleOnly = true;
+				}
+				
+				addArtistInfo(line, singleOnly, delim, artistInfos);
+			}
+			reader.close();
+		}
+		catch (Exception e)
+		{
+			System.err.println("Error: " + e);
+			e.printStackTrace();
+		}
+		return artistInfos;
+        
+	}
+	
+	public void spinSearch(String url, ArrayList <ArtistInfo> artistInfos, Date firstDayOfWeek, Date lastDayOfWeek, String filePath) throws Exception {
+		Map<String, List<Spin>> spinsByArtist = getSpins(url, artistInfos, firstDayOfWeek, lastDayOfWeek, filePath);
+		outputSpinsByArtist(filePath, spinsByArtist);
+	}
+	
+	public static Date parseFirstDayOfWeek(String line) {
 		Date firstDayOfWeek = null;
 		if(line.indexOf("Date:") != -1) {
 			String[] segments = line.substring(6).split(" - ");
@@ -96,7 +120,7 @@ public class XpnSearch {
 		return firstDayOfWeek;
 	}
 	
-	static Date parseLastDayOfWeek(String line) {
+	public static Date parseLastDayOfWeek(String line) {
 		Date lastDayOfWeek = null;
 		if(line.indexOf("Date:") != -1) {
 			String[] segments = line.substring(6).split(" - ");
@@ -105,12 +129,7 @@ public class XpnSearch {
 		return lastDayOfWeek;
 	}
 
-	public void spinSearch(String url, ArrayList <ArtistInfo> artistInfos, Date firstDayOfWeek, Date lastDayOfWeek, String filePath) throws Exception {
-		Map<String, List<Spin>> spinsByArtist = getSpins(url, artistInfos, firstDayOfWeek, lastDayOfWeek, filePath);
-		outputSpinsByArtist(filePath, spinsByArtist);
-	}
 	
-	//scrape the webpage for spins, organize them, write them to file
 	private Map<String, List<Spin>> getSpins(String url, ArrayList <ArtistInfo> artistInfos, Date firstDayOfWeek, Date lastDayOfWeek, String filePath) throws Exception {
 		ArrayList<ArtistInfo> artistsToSearch = artistInfos;
 		Map<String, Spin> allSpins = new HashMap<>();
@@ -146,8 +165,7 @@ public class XpnSearch {
 		}
 	}
 
-	//searches website by artist and pulls any spins for relevant song or album
-	static Elements getSpinData(ArtistInfo currentArtist, String url, String songOrAlbumName) throws Exception {
+	private	static Elements getSpinData(ArtistInfo currentArtist, String url, String songOrAlbumName) throws Exception {
 		Map<String, String> postData = new HashMap<>();
 		String artist = (String) currentArtist.getArtistName();
 		postData.put("val", "search");
@@ -162,35 +180,6 @@ public class XpnSearch {
 		System.out.println("*** Retrieved " + artist + " spins: " + spinData.text());
 		
 		return spinData;
-	}
-
-	//reads and stores albums and singles to search
-	public ArrayList <ArtistInfo> getArtistList(String filePath, String delim){
-		
-		String line = null;
-		ArrayList<ArtistInfo> artistInfos = new ArrayList<ArtistInfo>(); 
-		boolean singleOnly = false;
-		try
-		{
-			BufferedReader reader = new BufferedReader(new FileReader(filePath));
-			while ((line = reader.readLine()) != null)
-			{
-				
-				if (line.equalsIgnoreCase("singles:")) {
-					singleOnly = true;
-				}
-				
-				addArtistInfo(line, singleOnly, delim, artistInfos);
-			}
-			reader.close();
-		}
-		catch (Exception e)
-		{
-			System.err.println("Error: " + e);
-			e.printStackTrace();
-		}
-		return artistInfos;
-        
 	}
 	
 	private static void addArtistInfo(String line, boolean singleOnly, String delim, ArrayList<ArtistInfo> artistInfos) {
@@ -257,7 +246,6 @@ public class XpnSearch {
 	
 	
 
-	//uses data from webpage to create a spin for each promoted song within date range and returns all spins
 	private void addSpin(Elements spinData, ArtistInfo artistInfo, Date firstDayOfWeek, Date lastDayOfWeek, Map<String, Spin> allSpins) throws Exception   {
 		for (Element e : spinData) {
 			String[] segments = e.text().split(" - ");
@@ -300,7 +288,7 @@ public class XpnSearch {
 			return false;
 		}
 	}
-	//create a map of spin lists organized by artist names
+
 	private static Map<String, List<Spin>> getSpinsByArtist(Collection<Spin> values) {
 		
 		Map<String, List<Spin>> spins = new HashMap<>();
@@ -318,7 +306,6 @@ public class XpnSearch {
 		return spins;
 	}
 
-	//write each spin to file organized by artist name
 	private void writeSpinsToFile(List<Spin> values, String filePath) throws Exception {
 		BufferedWriter writer = new BufferedWriter(new FileWriter("/Users/parkeralbert/Downloads/spins.txt", true));
 		
@@ -337,8 +324,8 @@ public class XpnSearch {
 		writer.close();
 	}
 	
-	//format date to be written out to file
-	String formatWrittenDate(Spin processedSpin){
+
+	private String formatWrittenDate(Spin processedSpin){
 		String formattedDate;
 
 		if (processedSpin.getFirstPlayDate() != processedSpin.getLastPlayDate()) {
@@ -354,7 +341,7 @@ public class XpnSearch {
 		return formattedDate;
 	}
 
-	private String removeZerosFromDate(Date inputDate) {
+	private static String removeZerosFromDate(Date inputDate) {
 		SimpleDateFormat secondFormatter = new SimpleDateFormat("MM/dd");
 		
 		String newDate = secondFormatter.format(inputDate);
