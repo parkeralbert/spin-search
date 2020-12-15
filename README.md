@@ -12,6 +12,8 @@ STEPS TO RUN LOCALLY:
    date range for each artist
 8. If you would like to check against a reference file for what spins should be outputted, open the file in the project directory titled "reference_spins.txt". I have deleted the spins on the reference file that contained spelling errors on the playlist sites, since that is currently out of scope of the script.
 
+NOTE: Be aware that due to a slow website, xpnSearch takes about 8 minutes to run. I would recommend commenting it out once it is checked, since wfmuSearch only takes a few seconds.
+
 NOTE: This is a work in progress, unit tests are still being created to fine tune the project, and extra functionalities will be pushed as I update it.
 
 You can email me at parkeralbert1@gmail.com if you have any questions or concerns!
